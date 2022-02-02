@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => $model->category_ids,
 //                                    \app\components\Helpers::pd(\app\models\CategoryPost::find())
             ],
-            ['class' => 'yii\grid\ActionColumn', 'template' => '{view}']
+            ['class' => 'yii\grid\ActionColumn', 'template' => '{view} {delete}']
         ],
     ]) ?>
 

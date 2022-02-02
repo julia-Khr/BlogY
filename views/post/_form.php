@@ -25,7 +25,7 @@ use yii\helpers\ArrayHelper;
 
     <?= $form->field($model, 'user_id')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'date') ?>
+    <?= $form->field($model, 'date')->textInput(['type' => 'date']) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
