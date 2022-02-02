@@ -3,10 +3,13 @@
 namespace app\controllers;
 
 use app\components\Helpers;
+use app\models\User;
+use PharIo\Manifest\Author;
 use Yii;
 use app\models\Category;
 use app\models\CategoryPost;
 use app\models\Post;
+use yii\helpers\Console;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -34,7 +37,7 @@ class PostController extends Controller
                         'actions' => ['create', 'update','delete'],
                         'roles' => ['?'],
                         'denyCallback' => function ($rule, $action) {
-                            $this->redirect(['/user/signup']);
+                            $this->redirect(['/user/login']);
                         }
                     ],
                     [
@@ -92,6 +95,8 @@ class PostController extends Controller
     {
         $model = new Post();
         $categories = Category::find()->all();
+
+        $model->user_id = \Yii::$app->user->identity->username;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
