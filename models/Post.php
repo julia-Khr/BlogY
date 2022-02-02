@@ -39,7 +39,8 @@ class Post extends \yii\db\ActiveRecord
             [['title'], 'string', 'max' => 100],
             [['text'], 'string', 'max' => 2000],
             [['user_id'], 'string', 'max' => 45],
-            [['category_ids', 'category_search'], 'safe']
+            [['category_ids', 'category_search'], 'safe'],
+            [['title', 'date', 'user_id', 'category_ids', 'text'], 'required']
 
         ];
     }
@@ -55,7 +56,8 @@ class Post extends \yii\db\ActiveRecord
             'text' => 'Text',
             'user_id' => 'User ID',
             'date' => 'Date',
-            'category_ids' => 'Categories'
+            'category_ids' => 'Categories',
+            'category_search' => 'Categories'
         ];
     }
 
@@ -74,15 +76,6 @@ class Post extends \yii\db\ActiveRecord
         return $this->hasMany(Category::className(), ['id' => 'category_id'])->via('categoryPosts');
     }
 
-    public static function getCategoryList(){
-        return CategoryPost::find();
-    }
-
-    public function getCategoryTitle(){
-        $list = self::getCategoryList();
-        return $list[$this->category_id];
-//        Helpers::pd($list[$this->category_id]);
-    }
     public function search()
     {
         $query = Post::find();
@@ -117,4 +110,30 @@ class Post extends \yii\db\ActiveRecord
         return $dataProvider;
     }
 
+    public function loadCategories()
+    {
+        $this->category_ids = [];
+        if (!empty($this->id)) {
+            $rows = CategoryPost::find()
+                ->select(['category_id'])
+                ->where(['post_id' => $this->id])
+                ->asArray()
+                ->all();
+            foreach($rows as $row) {
+                $this->category_ids[] = $row['category_id'];
+            }
+        }
+    }
+    public function saveCategories()
+    {
+        CategoryPost::deleteAll(['post_id' => $this->id]);
+        if (is_array($this->category_ids)) {
+            foreach($this->category_ids as $category_id) {
+                $pc = new CategoryPost();
+                $pc->post_id = $this->id;
+                $pc->category_id = $category_id;
+                $pc->save();
+            }
+        }
+   }
 }

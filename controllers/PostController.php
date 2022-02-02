@@ -7,10 +7,10 @@ use Yii;
 use app\models\Category;
 use app\models\CategoryPost;
 use app\models\Post;
-use app\models\SearchPost;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 
 
@@ -24,17 +24,28 @@ class PostController extends Controller
      */
     public function behaviors()
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['create', 'update','delete'],
+                'rules' => [
+                    [
+                        'allow' => false,
+                        'actions' => ['create', 'update','delete'],
+                        'roles' => ['?'],
+                        'denyCallback' => function ($rule, $action) {
+                            $this->redirect(['/user/signup']);
+                        }
                     ],
+                    [
+                        'allow' => true,
+                        'actions' => ['create', 'update','delete'],
+                        'roles' => ['@'],
+                    ],
+
                 ],
-            ]
-        );
+            ],
+        ];
     }
 
     /**
@@ -114,10 +125,14 @@ class PostController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->loadCategories();
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post()))  {
+        if ($model->save()) {
+            $model->saveCategories();
+            return $this->redirect(['index']);
         }
+    }
 
         return $this->render('update', [
             'model' => $model,

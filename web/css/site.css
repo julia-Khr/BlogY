@@ -1,7 +1,9 @@
 main > .container {
     padding: 70px 15px 20px;
 }
-
+.bg-header{
+    background: #1b3f5f;
+}
 .footer {
     background-color: #f5f5f5;
     font-size: .9em;
@@ -63,7 +65,9 @@ a.desc:after {
     padding-top: 7px;
     color: rgba(255, 255, 255, 0.5);
 }
-
+.open-nav .open > a, .nav .open > a:hover, .nav .open > a:focus{
+    background-color: #1b3f5f!important;
+}
 @media(max-width:767px) {
     .nav li > form > button.logout {
         display:block;
