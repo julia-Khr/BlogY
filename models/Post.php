@@ -126,7 +126,6 @@ class Post extends \yii\db\ActiveRecord
     }
     public function saveCategories()
     {
-        /* clear the categories of the post before saving */
         CategoryPost::deleteAll(['post_id' => $this->id]);
         if (is_array($this->category_ids)) {
             foreach($this->category_ids as $category_id) {
@@ -136,6 +135,5 @@ class Post extends \yii\db\ActiveRecord
                 $pc->save();
             }
         }
-        /* Be careful, $this->category_ids can be empty */
-    }
+   }
 }

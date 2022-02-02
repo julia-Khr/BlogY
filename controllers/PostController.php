@@ -7,10 +7,10 @@ use Yii;
 use app\models\Category;
 use app\models\CategoryPost;
 use app\models\Post;
-use app\models\SearchPost;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 
 
@@ -24,17 +24,28 @@ class PostController extends Controller
      */
     public function behaviors()
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['create', 'update','delete'],
+                'rules' => [
+                    [
+                        'allow' => false,
+                        'actions' => ['create', 'update','delete'],
+                        'roles' => ['?'],
+                        'denyCallback' => function ($rule, $action) {
+                            $this->redirect(['/user/signup']);
+                        }
                     ],
+                    [
+                        'allow' => true,
+                        'actions' => ['create', 'update','delete'],
+                        'roles' => ['@'],
+                    ],
+
                 ],
-            ]
-        );
+            ],
+        ];
     }
 
     /**
