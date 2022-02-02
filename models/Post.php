@@ -54,7 +54,7 @@ class Post extends \yii\db\ActiveRecord
             'id' => 'ID',
             'title' => 'Title',
             'text' => 'Text',
-            'user_id' => 'User ID',
+            'user_id' => 'User name',
             'date' => 'Date',
             'category_ids' => 'Categories',
             'category_search' => 'Categories'
